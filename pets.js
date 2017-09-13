@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 const path = require('path')
-const http = require('http')
 const fs = require('fs')
 var node = path.basename(process.argv[0])
 var file = 'pets.json'

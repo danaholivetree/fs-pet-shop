@@ -4,14 +4,8 @@ const http = require('http')
 const fs = require('fs')
 const url = require('url')
 const petsPath = path.join(__dirname, 'pets.json')
-// var node = path.basename(process.argv[0])
-// var file = 'pets.json'
-// var cmd = process.argv[2]
-//
 const port = 8000;
-//const myURL = 'https://example.org/foo'
 var server = http.createServer(function(req,res) {
-
   if (req.method === 'GET') {
     if (req.url === '/pets') {
       fs.readFile(petsPath, 'utf8', function (err, data){
@@ -56,8 +50,6 @@ var server = http.createServer(function(req,res) {
     }
   }
 })
-
-//
 server.listen(port, function() {
   console.log('Listening on port', port)
 })

@@ -47,7 +47,7 @@ $ nodemon httpServer.js
 Open a new shell tab and install HTTPie.
 
 ```shell
-$ brew install httpie
+
 ```
 
 Use the new `http` shell command to send HTTP requests to your server. Remember to set the port of your HTTP server to something like `8000`.
