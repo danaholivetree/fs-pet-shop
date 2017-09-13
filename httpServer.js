@@ -34,7 +34,7 @@ var server = http.createServer(function(req,res) {
         res.setHeader('Content-Type', 'application/json')
         var obj = JSON.parse(data)
         console.log(`should be returning`,obj[0])
-        res.end(obj[0])
+        res.end(JSON.stringify(obj[0]))
       })
     }
     else if (req.url === '/pets/1') {
@@ -46,7 +46,7 @@ var server = http.createServer(function(req,res) {
         res.setHeader('Content-Type', 'application/json')
         var obj = JSON.parse(data)
         console.log(`should be returning`,obj[1])
-        res.end(`${obj[1]}`)
+        res.end(JSON.stringify(obj[1]))
       })
     }
     else {
