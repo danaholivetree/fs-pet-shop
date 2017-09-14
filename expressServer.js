@@ -11,14 +11,22 @@ var path = ''
 app.use(bodyParser.json())
 
 app.get('/pets/:id', function(req, res) {
-  console.log(req.params.id)
+  let index = req.params.id
   fs.readFile('pets.json', 'utf8', function (err, data){
     if (err) {
       console.error(err.message)
     }
-    res.statusCode = 200
-    res.setHeader('Content-Type', 'application/json')
-    res.end(JSON.parse(data)[req.params.id])
+    let info = JSON.parse(data)
+    if (!info[index]) {
+      res.statusCode = 404
+      res.setHeader('Content-Type', 'text/plain')
+      res.end(`Not Found`)
+    }
+    else {
+      res.statusCode = 200
+      res.setHeader('Content-Type', 'application/json')
+      res.end(JSON.stringify(info[index]))
+    }
   })
 });
 
@@ -27,14 +35,22 @@ app.get('/pets', function(req, res) {
     if (err) {
       console.error(err.message)
     }
+    let info = JSON.parse(data)
     res.statusCode = 200
     res.setHeader('Content-Type', 'application/json')
-    res.end(JSON.parse(data)[req.params.id])
+    res.end(JSON.stringify(info))
   })
 });
 
 app.post('/pets', function(req, res){
   req.body.age = Number(req.body.age)
+
+  if (isNaN(newBody.age) || newBody.kind == false || newBody.name == false) {
+    res.statusCode = 400
+    res.setHeader('Content-Type', 'text/plain')
+    res.end(`Bad Request`)
+  }
+
   fs.readFile('pets.json', 'utf8', function (err, data) {
     if (err) {
       console.error(err.message)
@@ -55,11 +71,8 @@ app.post('/pets', function(req, res){
   })
 })
 
-// app.use(function(req, res) {
-//   res.sendStatus(404);
-// });
 
 app.listen(port, function() {
   console.log(`listening on port`, port)
 })
-//module.exports = server;
+module.exports = app;
