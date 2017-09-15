@@ -1,114 +1,103 @@
-#!/usr/bin/env node
-const path = require('path')
-const fs = require('fs')
-var node = path.basename(process.argv[0])
-var file = 'pets.json'
-var cmd = process.argv[2]
+var fs = require('fs')
+let file = 'pets.json'
+let subc = process.argv[2]
+let ind = process.argv[3]
 
-if (process.argv == 'git checkout -- pets.json' ) {
-  fs.unlink('pets.json', function() {
-    console.log('deleted pets.json')
-
+if (process.argv === "git checkout -- pets.json") {
+  fs.unlink(file, () => {
+    console.log('reset pets.json')
   })
-  // fs.openSync('pets.json', 'w')
 }
 
-if (!cmd) {
-  console.error(`Usage: ${node} pets.js [read | create | update | destroy]`)
-  process.exitCode = 1;
+if (!subc) {
+  console.error('Usage: node pets.js [read | create | update | destroy]')
+  process.exit(1)
 }
 
-if (cmd === 'read') {
-
-  fs.readFile(file, 'utf8', function(err,data) {
-    if (err) {
-      throw err
+if (subc === 'read') {
+  fs.readFile(file, 'utf8', (err, data) => {
+    if (err) throw err;
+    if (process.argv.length < 4) {
+      console.log(JSON.parse(data));
     }
-    var obj = JSON.parse(data)
-    if (process.argv.length === 3) {
-      console.log(obj)
+    if (!ind) {
+      console.error('Usage: node pets.js read INDEX')
     }
-    if (process.argv.length === 4) {
-
-      if ((process.argv[3]) >= obj.length || process.argv[3] < 0) {
-        console.error(`Usage: ${node} pets.js ${cmd} INDEX`)
-      }
-      else console.log(obj[process.argv[3]])
+    else {
+      console.log((JSON.parse(data))[ind])
     }
   })
 }
 
-if (cmd === 'create') {
-
+if (subc === 'create') {
   if (process.argv.length < 6) {
-    console.error(`Usage: ${node} pets.js ${cmd} AGE KIND NAME`)
+    console.error('Usage: node pets.js create AGE KIND NAME')
     process.exit(1)
   }
+  let age = Number(process.argv[3])
+  let kind = process.argv[4]
+  let name = process.argv[5]
+  let newData = {age, kind, name}
 
-  fs.readFile(file, 'utf8', function(err,data) {
-    if (err) {
-      throw err
-    }
-    var obj = JSON.parse(data)
-    let newPet = {age: Number(process.argv[3]), kind: process.argv[4], name: process.argv[5]}
-
-    obj.push(newPet)
-    var newPetJSON = JSON.stringify(obj)
-
-    fs.writeFile(file, newPetJSON, function(err){
-      if (err) {
-        throw err
-      }
-      console.log(newPet)
+  fs.readFile(file, 'utf8', (err, data) => {
+    if (err) throw err
+    let pets = JSON.parse(data)
+    pets.push(newData)
+    let jsonFile = JSON.stringify(pets)
+    fs.writeFile(file, jsonFile, (err, data) => {
+      if (err) throw err
+      console.log(newData)
     })
-
   })
 }
 
-
-if (cmd === 'update') {
+if (subc === 'update') {
   if (process.argv.length < 7) {
-    console.error(`Usage: node pets.js update INDEX AGE KIND NAME`)
+    console.error('Usage: node pets.js update INDEX AGE KIND NAME')
     process.exit(1)
   }
-  fs.readFile(file, 'utf8', function(err,data) {
-    if (err) {
-      throw err
+  fs.readFile(file, 'utf8', (err, data) => {
+    let pets = JSON.parse(data)
+    if (!pets[ind]) {
+      console.error('Usage: node pets.js update INDEX AGE KIND NAME')
+      process.exit(1)
     }
-    var obj = JSON.parse(data)
-    let updatePet = {age: Number(process.argv[4]), kind: process.argv[5], name: process.argv[6]}
+    let age = Number(process.argv[4])
+    if (isNaN(age)){
+      console.error('Usage: node pets.js update INDEX AGE KIND NAME')
+      process.exit(1)
+    }
 
-    obj.splice(process.argv[3], 1, updatePet)
-    var newPetJSON = JSON.stringify(obj)
+    let kind = process.argv[5]
+    let name = process.argv[6]
+    let newData = {age, kind, name}
+    pets.splice(ind, 1, newData)
+    let newFile = JSON.stringify(pets)
 
-    fs.writeFile(file, newPetJSON, function(err){
-      if (err) {
-        throw err
-      }
-      console.log(updatePet)
+    fs.writeFile(file, newFile, (err, data) => {
+      if (err) throw err
+      console.log(newData)
     })
   })
 }
 
-if (cmd === 'destroy') {
+if (subc === 'destroy') {
   if (process.argv.length < 4) {
-    console.error(`Usage: node pets.js destroy INDEX`)
-    process.exit(1)
+    console.error('Usage: node pets.js destroy INDEX')
+    process.exit(1);
   }
-  fs.readFile(file, 'utf8', function(err,data) {
-    if (err) {
-      throw err
+  fs.readFile(file, 'utf8', (err, data) => {
+    if (err) throw err
+    let pets = JSON.parse(data)
+    if (!pets[ind]) {
+      console.error('Usage: node pets.js destroy INDEX')
+      process.exit(1)
     }
-    var obj = JSON.parse(data)
-
-    let destroyed = obj.splice(process.argv[3], 1)
-    var newPetJSON = JSON.stringify(obj)
-
-    fs.writeFile(file, newPetJSON, function(err) {
-      if (err) {
-        throw err
-      }
-      console.log(destroyed[0])
+    let newData = pets.splice(ind, 1)
+    let newFile = JSON.stringify(pets)
+    fs.writeFile(file, newFile, (err, data) => {
+      if (err) throw err
+      console.log(newData[0])
     })
   })
 }
