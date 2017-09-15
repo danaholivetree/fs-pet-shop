@@ -51,14 +51,12 @@ var server = http.createServer(function(req,res) {
         res.statusCode = 200
         res.setHeader('Content-Type', 'application/json')
         var obj = JSON.parse(data)
-        console.log(">>>>/PETS/2");
         res.end(JSON.stringify(obj[2]))
       })
     } else {
       res.statusCode = 404
       res.setHeader('Content-Type', 'text/plain')
       res.end(`Not Found`)
-      console.log("HERE WE ARE LOST AGAIN");
     }
   }
 
@@ -87,7 +85,6 @@ var server = http.createServer(function(req,res) {
             res.statusCode = 400
             res.setHeader('Content-Type', 'text/plain')
             res.end(`Bad Request`)
-            console.log('BAD REQUEST')
           }
 
           else {
@@ -99,9 +96,7 @@ var server = http.createServer(function(req,res) {
               }
               res.statusCode = 200
               res.setHeader("Content-Type", "application/json")
-
               res.end(JSON.stringify(newPet))
-              console.log('ALL GOOD')
             })
           }
         })
@@ -111,7 +106,6 @@ var server = http.createServer(function(req,res) {
       res.statusCode = 404
       res.setHeader('Content-Type', 'text/plain')
       res.end(`Not Found`)
-      console.log("HERE WE ARE LOST AGAIN");
     }
   })
 

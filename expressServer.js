@@ -1,14 +1,15 @@
 'use strict'
 
-const express = require('express')
-const fs = require('fs')
-const bodyParser = require('body-parser');
+var express = require('express')
+var fs = require('fs')
+var bodyParser = require('body-parser');
 
-const app = express()
-const port = 8000
+var app = express()
+var port = 8000
 var path = ''
 
 app.use(bodyParser.json())
+
 
 app.get('/pets/:id', function(req, res) {
   let index = req.params.id
@@ -17,15 +18,15 @@ app.get('/pets/:id', function(req, res) {
       console.error(err.message)
     }
     let info = JSON.parse(data)
-    if (!info[index]) {
-      res.statusCode = 404
-      res.setHeader('Content-Type', 'text/plain')
-      res.end(`Not Found`)
+    if (info[index]) {
+        res.statusCode = 200
+        res.setHeader('Content-Type', 'application/json')
+        res.end(JSON.stringify(info[index]))
     }
     else {
-      res.statusCode = 200
-      res.setHeader('Content-Type', 'application/json')
-      res.end(JSON.stringify(info[index]))
+        res.statusCode = 404
+        res.setHeader('Content-Type', 'text/plain')
+        res.end(`Not Found`)
     }
   })
 });
@@ -45,7 +46,7 @@ app.get('/pets', function(req, res) {
 app.post('/pets', function(req, res){
   req.body.age = Number(req.body.age)
 
-  if (isNaN(newBody.age) || newBody.kind == false || newBody.name == false) {
+  if (isNaN(req.body.age) || req.body.kind == false || req.body.name == false) {
     res.statusCode = 400
     res.setHeader('Content-Type', 'text/plain')
     res.end(`Bad Request`)
@@ -69,6 +70,12 @@ app.post('/pets', function(req, res){
     })
 
   })
+})
+
+app.use('*', function(req, res) {
+  res.statusCode = 404
+  res.setHeader('Content-Type', 'text/plain')
+  res.end(`Not Found`)
 })
 
 
