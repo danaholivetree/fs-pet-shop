@@ -25,15 +25,14 @@ app.get('/pets/:id', (req, res, next) => {
   fs.readFile(filePath, 'utf8', (err, petsJSON) => {
     let pets = JSON.parse(petsJSON)
     let id = req.params.id
-    if (id < 0 || Number.isNaN(id)) {
-      return res.status(400).end('Bad Request')
+    if (Number.isNaN(id)) {
+      return res.sendStatus(400)
     }
-    else if (id > pets.length) {
-      return res.status(404).end('Not Found')
+    else if (id < 0 || id > pets.length) {
+      return res.sendStatus(404)
     }
     else {
       let pet = pets[id]
-      console.log(pets[id])
       res.send(pet)
     }
   })
@@ -44,7 +43,7 @@ app.post('/pets', function(req, res, next) {
   let pet = {name, age, kind}
   pet.age = Number(pet.age)
   if (Number.isNaN(pet.age) || !pet.kind || !pet.name) {
-    return res.status(400).end('Bad Request')
+    return res.sendStatus(400)
   }
   fs.readFile(filePath, 'utf8', (err,petsJSON) => {
     let pets = JSON.parse(petsJSON)
@@ -96,7 +95,11 @@ app.delete('/pets/:id', function(req, res, next) {
     }
     let pets = JSON.parse(petsJSON)
     let id = req.params.id
-    if (!id || id < 0 || id > pets.length) {
+    console.log(id)
+    if (Number.isNaN(id)) {
+      return res.sendStatus(400)
+    }
+    else if (id < 0 || id > pets.length || !id) {
       return res.sendStatus(404)
     }
     let pet = pets.splice(id, 1)[0]
